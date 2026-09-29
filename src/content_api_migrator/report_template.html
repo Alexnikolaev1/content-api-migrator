@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}</title>
+<style>
+:root {{
+  --bg:#17191C; --surface:#1F2226; --border:#2C2F33; --text:#E8E6E1;
+  --muted:#8B8F94; --amber:#E8A33D; --teal:#4FA88A;
+}}
+body {{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"IBM Plex Sans",Segoe UI,sans-serif; line-height:1.55;
+}}
+.wrap {{ max-width:820px; margin:0 auto; padding:2.5rem 1.25rem 4rem; }}
+.brand {{ font-family:ui-monospace,monospace; color:var(--teal); letter-spacing:.04em; }}
+h1 {{ font-size:1.7rem; margin:0.8rem 0 1.2rem; }}
+.grid {{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:0.75rem; margin:1.2rem 0 1.8rem;
+}}
+.stat {{
+  background:var(--surface); border:1px solid var(--border); border-radius:6px;
+  padding:0.9rem 1rem;
+}}
+.stat b {{ display:block; font-size:1.35rem; font-family:ui-monospace,monospace; }}
+.stat span {{ color:var(--muted); font-size:0.82rem; }}
+table {{
+  width:100%; border-collapse:collapse; font-family:ui-monospace,monospace;
+  font-size:0.78rem; margin:0.5rem 0 1.5rem;
+}}
+td {{ border-bottom:1px solid var(--border); padding:0.45rem 0.35rem; vertical-align:top; }}
+.from {{ color:var(--amber); }}
+.to {{ color:var(--teal); }}
+h2 {{ font-size:1.05rem; margin:1.8rem 0 0.6rem; }}
+ul {{ color:var(--muted); padding-left:1.1rem; }}
+.note {{ color:var(--muted); font-size:0.85rem; }}
+.ready {{
+  display:inline-block; margin-top:0.5rem; padding:0.35rem 0.7rem;
+  border-radius:4px; background:var(--surface); border:1px solid var(--border);
+  font-family:ui-monospace,monospace;
+}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="brand">CONTINUITY</p>
+  <h1>{title}</h1>
+  <p class="note">account_id: {account}</p>
+  <div class="ready">ready_for_staging: {ready}</div>
+  <div class="grid">
+    <div class="stat"><b>{total}</b><span>total SKU</span></div>
+    <div class="stat"><b>{ok}</b><span>converted ok</span></div>
+    <div class="stat"><b>{failed}</b><span>FAIL</span></div>
+    <div class="stat"><b>{warnings}</b><span>WARN</span></div>
+    <div class="stat"><b>${risk_usd}</b><span>heuristic $ at risk (fails + unmigrated)</span></div>
+  </div>
+  <h2>Before → after (samples)</h2>
+  <table>{sample_rows}</table>
+  <h2>FAIL</h2>
+  <ul>{fail_list}</ul>
+  <h2>WARN</h2>
+  <ul>{warn_list}</ul>
+  <h2>Risk model</h2>
+  <p class="note">{disclaimer}</p>
+  <p class="note">avg price ${avg_price} · risk SKUs {risk_skus} · assumed orders/SKU/month {orders}</p>
+</div>
+</body>
+</html>

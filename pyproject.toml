@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "content-api-migrator"
+version = "0.5.2"
+description = "Convert Google Content API for Shopping product feeds to Merchant API format."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-auth>=2.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.0",
+    "ruff>=0.6",
+    "mypy>=1.8",
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "radon>=6.0",
+]
+
+[project.scripts]
+content-api-migrator = "content_api_migrator.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+content_api_migrator = ["report_template.html"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["content_api_migrator"]
+branch = true
+omit = ["*/content_api_migrator/__main__.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+packages = ["content_api_migrator"]
+files = ["src", "run.py", "martin_guard.py", "martin_limits.py", "martin_structure.py"]
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "BLE", "UP", "RUF"]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]

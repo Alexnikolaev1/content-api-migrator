@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Continuity — Content API → Merchant API за 48 часов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #17191C;
+    --surface: #1F2226;
+    --border: #2C2F33;
+    --text: #E8E6E1;
+    --text-muted: #8B8F94;
+    --amber: #E8A33D;
+    --amber-dim: #6B5527;
+    --teal: #4FA88A;
+    --teal-dim: #1E3A31;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, var(--teal-dim), transparent 55%),
+      radial-gradient(900px 500px at 100% 0%, var(--amber-dim), transparent 50%),
+      var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 6rem;
+  }
+  .brand {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--teal);
+    margin: 0 0 1.25rem;
+  }
+  .status-line {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 0 3px var(--amber-dim);
+    flex-shrink: 0;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dot { animation: none; }
+  }
+  h1 {
+    font-size: clamp(1.7rem, 4vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 1.5rem;
+    max-width: 22ch;
+  }
+  .terminal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.1rem 1.3rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin-bottom: 1.75rem;
+  }
+  .terminal .prompt { color: var(--text-muted); }
+  .terminal .err { color: var(--amber); }
+  .terminal .ok { color: var(--teal); }
+  .terminal .quiet { color: var(--text-muted); }
+  p { color: var(--text); margin: 0 0 1.1rem; max-width: 62ch; }
+  p.lede { font-size: 1.05rem; }
+  .cta {
+    display: inline-block;
+    background: var(--teal);
+    color: #0F1512;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.85rem 1.6rem;
+    border-radius: 5px;
+    font-size: 0.97rem;
+    margin: 0.5rem 0 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .cta:hover { opacity: 0.92; transform: translateY(-1px); }
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 3rem 0 1rem;
+  }
+  .checklist { list-style: none; padding: 0; margin: 0 0 2rem; }
+  .checklist li {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.97rem;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .mark {
+    color: var(--amber);
+    font-family: "IBM Plex Mono", monospace;
+    flex-shrink: 0;
+  }
+  .offer {
+    border-left: 3px solid var(--teal);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .offer .price {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1.9rem;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+  }
+  .offer .price .note {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 0.45rem;
+  }
+  .offer ul {
+    margin: 0.85rem 0 0;
+    padding-left: 1.1rem;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
+  .offer li { margin-bottom: 0.4rem; }
+  .proof {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.8rem;
+    line-height: 1.75;
+    color: var(--text-muted);
+    margin: 0 0 1.5rem;
+  }
+  .proof .from { color: var(--amber); }
+  .proof .to { color: var(--teal); }
+  .lab {
+    margin: 2rem 0 2.5rem;
+  }
+  .lab textarea {
+    width: 100%;
+    min-height: 140px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    line-height: 1.55;
+    padding: 0.9rem 1rem;
+    resize: vertical;
+  }
+  .lab .actions { margin: 0.75rem 0 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .lab button {
+    background: transparent;
+    border: 1px solid var(--teal);
+    color: var(--teal);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    padding: 0.55rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .lab button:hover { background: var(--teal-dim); }
+  .lab pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    overflow-x: auto;
+    color: var(--teal);
+    min-height: 120px;
+    white-space: pre-wrap;
+  }
+  .lab .err-msg { color: var(--amber); font-size: 0.85rem; margin: 0.4rem 0 0; }
+  .footnote {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .footnote a { color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="brand">CONTINUITY</p>
+
+  <div class="status-line">
+    <span class="dot"></span>
+    <span>Content API for Shopping — sunset с 18 августа 2026</span>
+  </div>
+
+  <h1>Google Shopping фид молча устарел. Вернём обновления за 48 часов.</h1>
+
+  <div class="terminal">
+<span class="prompt">$</span> curl shoppingcontent.googleapis.com/...<br>
+<span class="err">&lt; HTTP/1.1 410 Gone</span><br>
+<span class="quiet">&lt; Content API for Shopping was sunset…</span><br>
+<span class="prompt">$</span> migrate dry-run feed.json --account-id 4321<br>
+<span class="ok">ok: 1847  failed: 3  warnings: 12</span>
+  </div>
+
+  <p class="lede">Если каталог пушится своим кодом в Content API — листинги уже не обновляются. Магазин жив, Shopping — нет.</p>
+
+  <a class="cta" href="mailto:alex555196@gmail.com?subject=Content%20API%20migration%20%E2%80%94%20audit">Написать о вашем случае</a>
+
+  <h2>Это про вас, если</h2>
+  <ul class="checklist">
+    <li><span class="mark">&gt;</span> Код бьёт в <code>shoppingcontent.googleapis.com</code> напрямую</li>
+    <li><span class="mark">&gt;</span> Нет стандартного приложения вроде Google &amp; YouTube на Shopify</li>
+    <li><span class="mark">&gt;</span> Нет спринта на переписывание интеграции с нуля</li>
+    <li><span class="mark">&gt;</span> Уже есть <code>410 Gone</code> или просадка в Google Shopping</li>
+  </ul>
+
+  <h2>Доказательство, не «примерно»</h2>
+  <p class="proof">
+    <span class="from">online:en:US:1234</span> → <span class="to">en~US~1234</span><br>
+    <span class="from">{"value":"33.45","currency":"USD"}</span><br>
+    → <span class="to">{"amountMicros":"33450000","currencyCode":"USD"}</span><br>
+    <span class="from">"in stock"</span> → <span class="to">IN_STOCK</span>
+  </p>
+  <p>Ошибка в micros — это неверный прайс по всему каталогу. Перед боем всегда dry-run + HTML-отчёт с оценкой $ at risk.</p>
+
+  <h2>Попробуйте на своём JSON</h2>
+  <p class="note" style="color:var(--text-muted);font-size:0.9rem;margin:0 0 0.75rem;">Иллюстрация в браузере. Канон для сдачи: <code>migrate.ps1 convert</code>.</p>
+  <div class="lab">
+    <textarea id="inJson" spellcheck="false">{
+  "id": "online:en:US:1234",
+  "title": "A Tale of Two Cities",
+  "availability": "in stock",
+  "condition": "new",
+  "price": {"value": "33.45", "currency": "USD"},
+  "gtins": ["9780007350896"]
+}</textarea>
+    <div class="actions">
+      <button type="button" id="btnConvert">Сконвертировать</button>
+      <button type="button" id="btnSample">Пример Google</button>
+    </div>
+    <p class="err-msg" id="labErr" hidden></p>
+    <pre id="outJson">Нажмите «Сконвертировать» — увидите Merchant API JSON.</pre>
+  </div>
+
+  <h2>Что входит в $990</h2>
+  <div class="offer">
+    <div class="price">$990<span class="note">фикс, 48 часов с старта</span></div>
+    <ul>
+      <li>Аудит + HTML-отчёт (FAIL/WARN, before→after, est. $ at risk)</li>
+      <li>Перенос фида на Merchant API с сверкой ID, micros и enum</li>
+      <li>Staging upload: retry / resume / delta / verify</li>
+      <li>Diff с живым каталогом + client kit для handoff</li>
+    </ul>
+  </div>
+
+  <h2>Что не входит</h2>
+  <ul class="checklist">
+    <li><span class="mark">&gt;</span> Переписывание <code>customBatch</code> на async/parallel (отдельный объём)</li>
+    <li><span class="mark">&gt;</span> Accounts / shipping settings / inventory sub-API</li>
+    <li><span class="mark">&gt;</span> Бесконечная поддержка после сдачи — фиксируем scope в письме</li>
+  </ul>
+
+  <a class="cta" href="mailto:alex555196@gmail.com?subject=Content%20API%20migration%20%E2%80%94%20audit">Запросить аудит</a>
+
+  <div class="footnote">
+    <p>Пишите на <a href="mailto:alex555196@gmail.com">alex555196@gmail.com</a> — в теме: платформа, объём SKU, есть ли уже 410.</p>
+  </div>
+
+</div>
+<script>
+(function () {
+  const AVAIL = {
+    "in stock": "IN_STOCK", in_stock: "IN_STOCK",
+    "out of stock": "OUT_OF_STOCK", out_of_stock: "OUT_OF_STOCK",
+    preorder: "PREORDER", backorder: "BACKORDER"
+  };
+  const COND = { new: "NEW", used: "USED", refurbished: "REFURBISHED" };
+  const sample = document.getElementById("inJson").value;
+
+  function mapEnum(value, table, field) {
+    const key = String(value || "").trim().toLowerCase();
+    if (table[key]) return table[key];
+    const already = key.replace(/ /g, "_").toUpperCase();
+    if (Object.values(table).includes(already)) return already;
+    throw new Error("Unknown " + field + ": " + value);
+  }
+
+  function micros(value) {
+    const s = String(value);
+    if (!/^-?\d+(\.\d+)?$/.test(s)) throw new Error("bad price: " + value);
+    const neg = s.startsWith("-");
+    const abs = neg ? s.slice(1) : s;
+    const [whole, frac = ""] = abs.split(".");
+    const digits = (frac + "0000000").slice(0, 7);
+    let micro = BigInt(whole) * 1000000n + BigInt(digits.slice(0, 6));
+    if (Number(digits[6]) >= 5) micro += 1n;
+    return String(neg ? -micro : micro);
+  }
+
+  function productSegment(lang, feed, offer) {
+    const plain = lang + "~" + feed + "~" + offer;
+    if (!/[/%~]/.test(offer)) return plain;
+    const bytes = new TextEncoder().encode(plain);
+    let bin = "";
+    bytes.forEach(function (b) { bin += String.fromCharCode(b); });
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+
+  function convertOne(raw, accountId) {
+    const parts = String(raw.id || "").split(":");
+    if (parts.length < 4) throw new Error("id must be channel:lang:feed:offerId");
+    if (String(parts[0]).toLowerCase() !== "online") {
+      throw new Error("only online channel is in scope");
+    }
+    if (!raw.availability || !String(raw.availability).trim()) {
+      throw new Error("availability is required");
+    }
+    const language = parts[1], feed = parts[2], offerId = parts.slice(3).join(":");
+    const price = raw.price || {};
+    const attrs = {
+      title: raw.title || "",
+      availability: mapEnum(raw.availability, AVAIL, "availability"),
+      condition: mapEnum(raw.condition || "new", COND, "condition"),
+      price: { amountMicros: micros(price.value), currencyCode: price.currency || "USD" }
+    };
+    const gtins = raw.gtins || (raw.gtin ? [raw.gtin] : []);
+    if (gtins.length) attrs.gtins = gtins;
+    return {
+      name: "accounts/" + accountId + "/products/" + productSegment(language, feed, offerId),
+      contentLanguage: language,
+      feedLabel: feed,
+      offerId: offerId,
+      productAttributes: attrs
+    };
+  }
+
+  function run() {
+    const err = document.getElementById("labErr");
+    const out = document.getElementById("outJson");
+    err.hidden = true;
+    try {
+      const parsed = JSON.parse(document.getElementById("inJson").value);
+      const rows = Array.isArray(parsed) ? parsed : [parsed];
+      const converted = rows.map(function (row) { return convertOne(row, "4321"); });
+      out.textContent = JSON.stringify(converted.length === 1 ? converted[0] : converted, null, 2);
+    } catch (e) {
+      err.hidden = false;
+      err.textContent = e.message || String(e);
+      out.textContent = "";
+    }
+  }
+
+  document.getElementById("btnConvert").addEventListener("click", run);
+  document.getElementById("btnSample").addEventListener("click", function () {
+    document.getElementById("inJson").value = sample;
+    run();
+  });
+})();
+</script>
+</body>
+</html>

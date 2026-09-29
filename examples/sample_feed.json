@@ -1,0 +1,35 @@
+[
+  {
+    "id": "online:en:US:1234",
+    "title": "A Tale of Two Cities",
+    "description": "A classic novel about the French Revolution",
+    "link": "https://exampleWebsite.com/tale-of-two-cities.html",
+    "imageLink": "https://exampleWebsite.com/tale-of-two-cities.jpg",
+    "availability": "in stock",
+    "condition": "new",
+    "googleProductCategory": "Media > Books",
+    "brand": "Example Books",
+    "price": {"value": "33.45", "currency": "USD"},
+    "salePrice": {"value": "29.99", "currency": "USD"},
+    "gtins": ["9780007350896"],
+    "shipping": [
+      {
+        "price": {"value": "33.45", "currency": "USD"},
+        "country": "GB",
+        "service": "1st class post"
+      }
+    ]
+  },
+  {
+    "id": "online:en:US:sku:legacy:99",
+    "title": "OfferId with colons",
+    "description": "Regression fixture: offerId may contain colons",
+    "link": "https://example.com/p/99",
+    "imageLink": "https://example.com/p/99.jpg",
+    "availability": "out_of_stock",
+    "condition": "used",
+    "price": {"value": "19.99", "currency": "USD"},
+    "gtin": "00012345600012",
+    "shipping": []
+  }
+]

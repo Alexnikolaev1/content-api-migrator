@@ -1,0 +1,29 @@
+{
+  "name": "accounts/4321/products/en~US~1234",
+  "contentLanguage": "en",
+  "feedLabel": "US",
+  "offerId": "1234",
+  "productAttributes": {
+    "title": "A Tale of Two Cities",
+    "description": "A classic novel about the French Revolution",
+    "link": "https://exampleWebsite.com/tale-of-two-cities.html",
+    "imageLink": "https://exampleWebsite.com/tale-of-two-cities.jpg",
+    "availability": "IN_STOCK",
+    "condition": "NEW",
+    "price": {"amountMicros": "33450000", "currencyCode": "USD"},
+    "gtins": ["9780007350896"],
+    "shipping": [
+      {
+        "price": {"amountMicros": "33450000", "currencyCode": "USD"},
+        "country": "GB",
+        "service": "1st class post"
+      },
+      {
+        "price": {"amountMicros": "33450000", "currencyCode": "USD"},
+        "country": "FR",
+        "service": "1st class post"
+      }
+    ],
+    "googleProductCategory": "Media > Books"
+  }
+}
